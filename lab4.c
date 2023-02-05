@@ -1,159 +1,134 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <limits.h>
 
-struct Coordinate {
-    int x,y;
-    struct Coordinate *next;
-};
+typedef struct point {
+    int x, y, xV, yV;
+} Point;
 
-void connectCoordinate(int x, int y, int x1, int y1, struct Coordinate** head, struct Coordinate** tail) {
-    while (x != x1 || y != y1) {
-        if (x1 > x) {
-            x1--;
-        } else if (x1 < x) {
-            x1++;
-        }
-        if (y1 > y) {
-            y1--;
-        } else if (y1 < y) {
-            y1++;
-        }
+int main(int argc, char *argv[]) {
+    FILE *fip, *fop;
 
-        struct Coordinate *new_coord = (struct Coordinate *) malloc(sizeof(struct Coordinate));
-        new_coord->x = x1;
-        new_coord->y = y1;
-        new_coord->next = NULL;
+    fip = fopen(argv[1], "r");
+    fop = fopen(argv[2], "w");
+    int sec = atoi(argv[3]);
 
-//        printf("==test== %d %d\n", new_coord->a, new_coord->b);
-        if (*head == NULL) {
-            *head = new_coord;
-            *tail = new_coord;
+    char coor[22][22] = {" "};
+
+    int x, y, xV, yV;
+    int count = 0;
+    Point *points = NULL;
+
+    int n = 21;
+
+    points = (Point *) malloc(sizeof(Point));
+
+    while (fscanf(fip, "%d,%d,%d,%d", &x, &y, &xV, &yV) != EOF) {
+        if (count == 0) {
+            points = (Point *) malloc(sizeof(Point));
         } else {
-            (*tail)->next = new_coord;
-            *tail = new_coord;
+            points = (Point *) realloc(points, (count + 1) * sizeof(Point));
         }
-
-    }
-}
-
-int main(int argc, char **argv) {
-
-    struct Coordinate c;
-    memset(&c, 0, sizeof(struct Coordinate));
-
-    char *input_file = argv[1];
-    char *output_file = argv[2];
-
-    FILE *input = fopen(input_file, "r");
-    FILE *output = fopen(output_file, "w");
-
-
-    struct Coordinate *head = NULL;
-    struct Coordinate *tail = NULL;
-
-    int x,y;
-    int x1 , y1;
-    struct Coordinate *new_coord =(struct Coordinate *) malloc(sizeof(struct Coordinate));
-
-
-
-
-
-// Add the first coordinate (-1, -1)
-
-    x1 = -1;
-    y1 = -1;
-
-
-    x = -1, y = 20;
-    connectCoordinate(x, y, x1 ,y1, &head, &tail);
-    x1 = x;
-    y1 = y;
-
-
-    x = 20, y = 20;
-    connectCoordinate(x, y, x1 ,y1, &head, &tail);
-    x1 = x;
-    y1 = y;
-
-    x = 20, y = -1;
-    connectCoordinate(x, y, x1 ,y1, &head, &tail);
-    x1 = x;
-    y1 = y;
-
-// go back to the original coordinate
-    x = -1, y = -1;
-    connectCoordinate(x, y, x1 ,y1, &head, &tail);
-
-    x1 = x;
-    y1 = y;
-
-
-
-
-    while (fscanf(input, "%d,%d", &x, &y) == 2) {
-        struct Coordinate *new_coord = (struct Coordinate *) malloc(sizeof(struct Coordinate));
-
-
-        new_coord->x = x;
-        new_coord->y = y;
-
-        new_coord->next = NULL;
-        if (head == NULL) {
-            head = new_coord;
-            tail = new_coord;
-        } else {
-            tail->next = new_coord;
-            tail = new_coord;
-        }
+        points[count].x = x + 1;
+        points[count].y = y + 1;
+        points[count].xV = xV;
+        points[count].yV = yV;
+        count++;
     }
 
-
-
-
-    fclose(input);
-    struct Coordinate *current = head;
-    int min_x = current->x, max_x = current->x, min_y = current->y, max_y = current->y;
-    while (current != NULL) {
-        if (current->x < min_x) min_x = current->x;
-        if (current->x > max_x) max_x = current->x;
-        if (current->y < min_y) min_y = current->y;
-        if (current->y > max_y) max_y = current->y;
-        current = current->next;
-    }
-
-    for (int j = max_y; j >= min_y; j--) {
-        for (int i = min_x; i <= max_x; i++) {
-            int found = 0;
-            current = head;
-            while (current != NULL) {
-
-
-                if (current->x == i && current->y == j) {
-                        found = 1;
-                        if(current->x >-1 && current->x <20 && current->y >-1 && current->y<20){
-                            fprintf(output, "+");
-
-                        } else {
-                            fprintf(output, "*");
-                        }
-                        break;
-                }
-
-                current = current->next;
+    for (int i = 0; i <= n; i++) {
+        for (int j = 0; j <= n; j++) {
+            if (i == 0 || i == n || j == 0 || j == n) {
+                coor[i][j] = '*';
+            } else {
+                coor[i][j] = ' ';
             }
-
-            if (!found) {fprintf(output, " ");}
         }
-        fprintf(output, "\n");
     }
 
-    fclose(output);
-    free(new_coord);
+    int tmpX[100], tmpY[100], tmpCount = 0, k = 0;
+
+    Point *copy_points = malloc(count * sizeof(Point));
+    for (int i = 0; i < count; i++) {
+        copy_points[i] = points[i];
+    }
+
+    int i;
+    for (int j = 0; j < sec; j++) {
+        for (i = 0; i < count; i++) {
+            points[i].x = points[i].x + points[i].xV;
+            points[i].y = points[i].y + points[i].yV;
+
+            if (points[i].x > 21 || points[i].x < 0) {
+                points[i].xV = -points[i].xV;
+            }
+            if (points[i].y > 21 || points[i].y < 0) {
+                points[i].yV = -points[i].yV;
+            }
+            points[i].x = (points[i].x / 21) % 2 == 0 ? abs(points[i].x % 21) : abs(21 - abs(points[i].x % 21));
+            points[i].y = (points[i].y / 21) % 2 == 0 ? abs(points[i].y % 21) : abs(21 - abs(points[i].y % 21));
+        }
+        i = 0;
+
+        int m = i + 1;
+        while (m < count) {
+            if (points[i].x == points[m].x && points[i].y == points[m].y) {
+                tmpX[tmpCount] = points[i].x;
+                tmpY[tmpCount] = points[i].y;
+                m++;
+                tmpCount++;
+            } else {
+                m++;
+            }
+        }
+        int w = 0;
+        for (int q = 0; q < tmpCount; q++) {
+            while (w < count) {
+                if (tmpX[q] == points[w].x && tmpY[q] == points[w].y) {
+                    for (int p = w + 1; p <= count; p++) {
+                            points[p - 1].x = points[p].x;
+                            points[p - 1].y = points[p].y;
+                            points[p - 1].xV = points[p].xV;
+                            points[p - 1].yV = points[p].yV;
+                        }
+                    count--;
+                    w=0;
+                }else{
+                    w++;
+                }
+            }
+        }
+    }
+
+    for (int i = 0; i <= n; i++) {
+        for (int j = 0; j <= n; j++) {
+            if (points[k].x == i && points[k].y == j) {
+                if ((points[k].x) % 21 == 0 || (points[k].y) % 21 == 0) {
+                    coor[21 - j][i] = '*';
+                    k++;
+                } else {
+                    coor[21 - j][i] = '+';
+                    k++;
+                    i = 0;
+                    j = -1;
+                    if (k == count) {
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    for (int i = 0; i <= n; i++) {
+        for (int j = 0; j <= n; j++) {
+            fprintf(fop, "%c", coor[i][j]);
+        }
+        fprintf(fop, "\n");
+    }
+
+    fclose(fip);
+    fclose(fop);
+
+    free(points);
+
     return 0;
 }
-
-
-
