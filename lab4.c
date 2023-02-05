@@ -12,6 +12,7 @@ int main(int argc, char *argv[]) {
     fop = fopen(argv[2], "w");
     int sec = atoi(argv[3]);
 
+    //sets the array to draw the x, y coordinator.
     char coor[22][22] = {" "};
 
     int x, y, xV, yV;
@@ -22,6 +23,7 @@ int main(int argc, char *argv[]) {
 
     points = (Point *) malloc(sizeof(Point));
 
+    //bring the data from file.
     while (fscanf(fip, "%d,%d,%d,%d", &x, &y, &xV, &yV) != EOF) {
         if (count == 0) {
             points = (Point *) malloc(sizeof(Point));
@@ -35,6 +37,7 @@ int main(int argc, char *argv[]) {
         count++;
     }
 
+    //draws '*' when x or y are on the board.
     for (int i = 0; i <= n; i++) {
         for (int j = 0; j <= n; j++) {
             if (i == 0 || i == n || j == 0 || j == n) {
@@ -47,11 +50,7 @@ int main(int argc, char *argv[]) {
 
     int tmpX[100], tmpY[100], tmpCount = 0, k = 0;
 
-    Point *copy_points = malloc(count * sizeof(Point));
-    for (int i = 0; i < count; i++) {
-        copy_points[i] = points[i];
-    }
-
+    // sets the changing location according to seconds.
     int i;
     for (int j = 0; j < sec; j++) {
         for (i = 0; i < count; i++) {
@@ -69,6 +68,7 @@ int main(int argc, char *argv[]) {
         }
         i = 0;
 
+        // saves the values when two points are collided.
         int m = i + 1;
         while (m < count) {
             if (points[i].x == points[m].x && points[i].y == points[m].y) {
@@ -81,6 +81,7 @@ int main(int argc, char *argv[]) {
             }
         }
         int w = 0;
+        // removes x, y values.
         for (int q = 0; q < tmpCount; q++) {
             while (w < count) {
                 if (tmpX[q] == points[w].x && tmpY[q] == points[w].y) {
