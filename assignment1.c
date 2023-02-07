@@ -3,9 +3,8 @@
 
 #define MAX_LENGTH 25
 
-void justify(char *str, char **argv) {
-    FILE *output;
-    output = fopen(argv[2],"w");
+void justify(char *str, FILE *output) {
+
     int word_count = 0;
     int space_count = 0;
     int str_len = strlen(str);
@@ -91,7 +90,7 @@ void justify(char *str, char **argv) {
 
                 fprintf(output,"%c", str[j]);
                 if (str[j] == ' ') {
-                    for (int k = 1; k < space / (wc - 1); k++) {
+                    for (int k = 0; k < space / (wc - 1); k++) {
                         fprintf(output," ");
                     }
                     wc--;
@@ -108,13 +107,13 @@ void justify(char *str, char **argv) {
             if (str[j] == ' ') {
                 if (sc != 1 && sc > 1) {
                     for (int k = 0; k < space / (wc - 1); k++) {
-                        fprintf(output," ");
+                        fprintf(output,"%c",' ');
                     }
                     wc--;
                     space -= space / (wc - 1);
                 } else if (sc == 1) {
                     for (int k = 1; k < space; k++) {
-                        fprintf(output," ");
+                        fprintf(output,"%c",' ');
                     }
                 }
             }
@@ -127,9 +126,9 @@ void justify(char *str, char **argv) {
 
 int main(int argc, char **argv) {
 
-    char line[100];
+
     FILE *input;
-    char translated[100];
+
 
     input = fopen(argv[1], "r");
     if (input == NULL) {
@@ -145,10 +144,17 @@ int main(int argc, char **argv) {
 
     fseek(input, 0, SEEK_SET);
 
+    FILE *output;
+    output = fopen(argv[2],"w");
+
     int i = 0;
     int j = 0;
 
-    while (fgets(line, strlen(line), input)) {
+
+    char line[strlen((char *)input)];
+    char translated[10000];
+
+    while (fgets(line, sizeof(line), input)) {
         for (i = 0; i < sizeof(line); i++) {
             if (line[i] == '\0') {
                 break;
@@ -254,10 +260,10 @@ int main(int argc, char **argv) {
     fclose(input);
 
     for(int i =0; i<strlen(translated); i++){
-//        printf("%c", (char) translated[i]);
+        printf("%c", translated[i]);
     }
-//    printf("\n");
+    printf("\n");
 
-    justify(translated, argv);
+//    justify(translated, output);
 
 }
