@@ -1,22 +1,31 @@
 #include <stdio.h>
 #include <string.h>
+#include <limits.h>
+#include <stdlib.h>
 
 #define MAX_LENGTH 25
 
 void justify(char *str, FILE *output) {
-
     int word_count = 0;
     int space_count = 0;
     int str_len = strlen(str);
     int last_space = 0;
     int start = 0;
+    int errorWordCount = 0;
+
 
     for (int i = 0; i < str_len; i++) {
         if (str[i] == ' ') {
             space_count++;
             last_space = i;
+            errorWordCount = 0;
         } else {
             word_count++;
+            errorWordCount++;
+            if(errorWordCount > MAX_LENGTH){
+                printf("COMP2510ERROR: single word longer than 25 words\n");
+                exit(-1);
+            }
         }
     }
 
@@ -46,23 +55,26 @@ void justify(char *str, FILE *output) {
         int spaces_per_word = spaces_needed / (line_word_count - 1);
         int extra_spaces = spaces_needed % (line_word_count -1);
 
+        int extra_spaces_given = 0;
+
         for (int j = start; j <= end; j++) {
             fprintf(output,"%c", str[j]);
             if (str[j] == ' ') {
                 for (int k = 0; k < spaces_per_word; k++) {
                     fprintf(output,"%c",' ');
+                    if (extra_spaces_given < extra_spaces) {
+                        fprintf(output,"%c",' ');
+                        extra_spaces_given++;
+                    }
                 }
-                if (extra_spaces >= 0) {
 
-                    fprintf(output,"%c",' ');
-                    extra_spaces--;
-                }
             }
         }
 
         fprintf(output,"\n");
         start = end + 1;
     }
+
 
     if (start < str_len) {
         int sc = 0;
@@ -132,13 +144,13 @@ int main(int argc, char **argv) {
 
     input = fopen(argv[1], "r");
     if (input == NULL) {
-        printf("Invalid input!\n");
+        printf("COMP2510ERROR: Invalid input!\n");
         return 1;
     }
 
     fseek(input, 0, SEEK_END);
     if (ftell(input) == 0) {
-        printf("input.txt is empty\n");
+        printf("COMP2510ERROR: input.txt is empty\n");
         return 1;
     }
 
@@ -151,7 +163,7 @@ int main(int argc, char **argv) {
     int j = 0;
 
 
-    char line[strlen((char *)input)];
+    char line[10000];
     char translated[10000];
 
     while (fgets(line, sizeof(line), input)) {
@@ -250,6 +262,11 @@ int main(int argc, char **argv) {
                 translated[j++] = 'r';
                 i += 4;
             }
+
+            else if(line[i] < 0 || line[i]>127){
+                printf("COMP2510ERROR: non ASCII character\n");
+                exit(-1);
+            }
             else{
                 translated[j++] = line[i];
             }
@@ -259,11 +276,7 @@ int main(int argc, char **argv) {
 
     fclose(input);
 
-    for(int i =0; i<strlen(translated); i++){
-        printf("%c", translated[i]);
-    }
-    printf("\n");
 
-//    justify(translated, output);
+    justify(translated, output);
 
 }
