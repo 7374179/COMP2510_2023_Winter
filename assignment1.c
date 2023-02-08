@@ -5,134 +5,93 @@
 
 #define MAX_LENGTH 25
 
-void justify(char *str, FILE *output) {
-    int word_count = 0;
-    int space_count = 0;
-    int str_len = strlen(str);
-    int last_space = 0;
-    int start = 0;
-    int errorWordCount = 0;
+void justify(const char *str, FILE *output) {
+    int len = strlen(str);
+    int wordCount = 0;
+    int spaceCount = 0;
+    int currentLineLength = 0;
+    int amountOfLine = 1;
 
 
-    for (int i = 0; i < str_len; i++) {
+    for (int i = 0; i < len; i++) {
         if (str[i] == ' ') {
-            space_count++;
-            last_space = i;
-            errorWordCount = 0;
+            spaceCount++;
         } else {
-            word_count++;
-            errorWordCount++;
-            if(errorWordCount > MAX_LENGTH){
-                printf("COMP2510ERROR: single word longer than 25 words\n");
-                exit(-1);
-            }
+            wordCount++;
         }
     }
-
-    for (int i = 0; i < str_len / MAX_LENGTH; i++) {
-        int end = start + MAX_LENGTH;
-
-        while (end < str_len && str[end] != ' ') {
-            end--;
-        }
-
-        if (end == str_len) {
-            end = last_space;
-        }
-
-        int line_word_count = 0;
-        int line_len = 0;
-        for (int j = start; j <= end; j++) {
-            if (str[j] != ' ') {
-                line_word_count++;
-                line_len++;
-            } else {
-                line_len++;
-            }
-        }
-
-        int spaces_needed = MAX_LENGTH - line_len;
-        int spaces_per_word = spaces_needed / (line_word_count - 1);
-        int extra_spaces = spaces_needed % (line_word_count -1);
-
-        int extra_spaces_given = 0;
-
-        for (int j = start; j <= end; j++) {
-            fprintf(output,"%c", str[j]);
-            if (str[j] == ' ') {
-                for (int k = 0; k < spaces_per_word; k++) {
-                    fprintf(output,"%c",' ');
-                    if (extra_spaces_given < extra_spaces) {
-                        fprintf(output,"%c",' ');
-                        extra_spaces_given++;
-                    }
-                }
-
-            }
-        }
-
-        fprintf(output,"\n");
-        start = end + 1;
+    if (len <= MAX_LENGTH && spaceCount == 0) {
+        fprintf(output, "%s", str);
+        fclose(output);
+        return;
+    } else if(len>MAX_LENGTH && spaceCount == 0) {
+        printf("COMP2510ERROR: single word longer than 25 words\n");
+        exit(-1);
     }
 
 
-    if (start < str_len) {
-        int sc = 0;
-        int wc = 0;
-        int line_len = 0;
-        int last_space = -1;
+    int space = MAX_LENGTH - wordCount;
+    int extraSpace = space % spaceCount;
+    int extraNeeded = 0;
+    int w = 1;
 
-        for (int i = start; i < str_len; i++) {
-            if (str[i] == ' ') {
-                sc++;
-                last_space = i;
-            } else {
-                wc++;
-                line_len++;
-            }
-        }
+    printf("wordcount: %d\n", wordCount);
+    printf("space: %d\n", space);
+    printf("word: %d\n", spaceCount);
 
-        if (line_len > MAX_LENGTH) {
-            int new_start = last_space + 1;
-            line_len -= (last_space - start + 1);
-            sc--;
-            wc--;
-            int space = MAX_LENGTH - line_len;
-            for (int j = start; j <= last_space; j++) {
+    for (int j = 0; j < len; j++) {
+        currentLineLength++;
+        fprintf(output, "%c", str[j]);
 
-                fprintf(output,"%c", str[j]);
-                if (str[j] == ' ') {
-                    for (int k = 0; k < space / (wc - 1); k++) {
-                        fprintf(output," ");
-                    }
-                    wc--;
-                    space -= space / (wc - 1);
+        if (str[j] == ' ') {
+
+            if (w == space / spaceCount) {
+                if (extraNeeded < extraSpace) {
+                    fprintf(output, "%c", ' ');
+                    extraNeeded++;
                 }
             }
-            fprintf(output,"\n");
-            start = new_start;
-        }
 
-        int space = MAX_LENGTH - line_len;
-        for (int j = start; j < str_len; j++) {
-            fprintf(output,"%c", str[j]);
-            if (str[j] == ' ') {
-                if (sc != 1 && sc > 1) {
-                    for (int k = 0; k < space / (wc - 1); k++) {
-                        fprintf(output,"%c",' ');
-                    }
-                    wc--;
-                    space -= space / (wc - 1);
-                } else if (sc == 1) {
-                    for (int k = 1; k < space; k++) {
-                        fprintf(output,"%c",' ');
-                    }
+            for (int k = 1; k < space / spaceCount; k++) {
+                fprintf(output, "%c", ' ');
+                currentLineLength++;
+                if (extraNeeded < extraSpace) {
+                    fprintf(output, "%c", ' ');
+                    currentLineLength++;
+                    extraNeeded++;
+                }
+
+            }
+
+        }
+        if (currentLineLength > MAX_LENGTH) {
+            fprintf(output, "\n");
+            spaceCount = 0;
+            wordCount = 0;
+            extraNeeded = 0;
+            for (int z = currentLineLength; z < len; z++) {
+                if (str[z] == ' ') {
+                    spaceCount++;
+                } else {
+                    wordCount++;
                 }
             }
+
+            if (spaceCount <= MAX_LENGTH && spaceCount == 0) {
+                for (int q = currentLineLength; q < len; q++) {
+                    fprintf(output, "%c", str[q]);
+
+                }
+                return;
+            }
+            space = MAX_LENGTH - wordCount;
+            printf("%d\n", space);
+            extraSpace = space % spaceCount;
+            printf("%d\n", extraSpace);
+            currentLineLength = 0;
+
         }
-        fprintf(output,"\n");
     }
-
     fclose(output);
 }
 
@@ -264,7 +223,7 @@ int main(int argc, char **argv) {
             }
 
             else if(line[i] < 0 || line[i]>127){
-                printf("COMP2510ERROR: non ASCII character\n");
+                printf("COMP2510ERROR: not ASCII character\n");
                 exit(-1);
             }
             else{
