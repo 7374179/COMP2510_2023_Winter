@@ -35,10 +35,6 @@ void justify(const char *str, FILE *output) {
     int extraNeeded = 0;
     int w = 1;
 
-    printf("wordcount: %d\n", wordCount);
-    printf("space: %d\n", space);
-    printf("word: %d\n", spaceCount);
-
     for (int j = 0; j < len; j++) {
         currentLineLength++;
         fprintf(output, "%c", str[j]);
@@ -85,9 +81,7 @@ void justify(const char *str, FILE *output) {
                 return;
             }
             space = MAX_LENGTH - wordCount;
-            printf("%d\n", space);
             extraSpace = space % spaceCount;
-            printf("%d\n", extraSpace);
             currentLineLength = 0;
 
         }
