@@ -1,5 +1,4 @@
 #include <stdio.h>
-//#include <malloc.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -16,7 +15,7 @@ void *InsertionSort(Student arr[], int n) {
         for (j = i; j > 0 && arr[j - 1].ID > tmp.ID ||
                     (arr[j - 1].ID == tmp.ID && strlen(arr[j - 1].studentID) > strlen(tmp.studentID)) ||
                     (arr[j - 1].ID == tmp.ID && strlen(arr[j - 1].studentID) == strlen(tmp.studentID) &&
-                     arr[j - 1].a > tmp.a); j--) {
+                     arr[j - 1].a < tmp.a); j--) {
             arr[j] = arr[j - 1];
         }
         arr[j] = tmp;
@@ -24,13 +23,10 @@ void *InsertionSort(Student arr[], int n) {
 }
 
 int main(int argc, char **argv) {
-//int main() {
     FILE *fip, *fop;
 
     fip = fopen(argv[1], "r");
     fop = fopen(argv[2], "w");
-//    fip = fopen("input.txt", "r");
-//    fop = fopen("output.txt", "w");
     int num = 0;
 
     Student *student;
