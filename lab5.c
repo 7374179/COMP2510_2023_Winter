@@ -68,7 +68,7 @@ int main(int argc, char **argv) {
         if(i==num-1){
             break;
         }
-        fprintf(fop, "\n");
+        fprintf(fop, "\r\n");
     }
 
     fclose(fip);
