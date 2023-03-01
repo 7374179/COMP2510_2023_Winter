@@ -19,23 +19,33 @@ void swap(Point *a, Point *b) {
     *b = temp;
 }
 
+//int Random(int start, int end){
+//    srand(time(NULL));
+//    int ranNum = rand() % (end - start+1);
+//    return ranNum;
+//}
 
-int *QuickSort(Point *arr, int start, int end) {
+
+void QuickSort(Point *arr, int start, int end, int random) {
     if (start >= end) {
-        return 0;
+        return;
     }
     int key = start;
     int pl = start;
     int pr = end - 1;
     Point tmp;
-    srand(time(NULL));
-    int ranNum = rand() % (end - start+1);
-    int pivot = arr[ranNum].YearOfBirth;
+//    int ran = Random(start, end);
+//    srand(time(NULL));  //random 숫자때문에 정렬이 자꾸 엇나가는듯
+//    int ranNum = rand() % (end - start+1);
+    int pivot = arr[random].YearOfBirth;
+    int pivot1 = arr[random].DayOfBirth;
     while (pl <= pr) {
         while (arr[pl].YearOfBirth < pivot) {
+//        while (arr[pl].YearOfBirth < pivot || (arr[pl].YearOfBirth == pivot && arr[pl].DayOfBirth < pivot1)) {
             pl++;
         }
         while (arr[pr].YearOfBirth > pivot) {
+//        while (arr[pr].YearOfBirth > pivot || (arr[pl].YearOfBirth == pivot && arr[pl].DayOfBirth > pivot1)) {
             pr--;
         }
         if (pl <= pr) {
@@ -45,15 +55,15 @@ int *QuickSort(Point *arr, int start, int end) {
         }
 //    if (start < pr) QuickSort(arr, start, pr);
 //    if (pl < end) QuickSort(arr, pl, end);
+
         if (pr - start < end - pl) {
-            QuickSort(arr, start, pr);
+            QuickSort(arr, start, pr, random);
             start = pl;
         } else {
-            QuickSort(arr, pl, end);
+            QuickSort(arr, pl, end, random);
             end = pr + 1;
         }
     }
-
 }
 
 //int main(int argc, char **argv){
@@ -91,7 +101,10 @@ int main() {
     free(points);
     points = new_points;
 
-    QuickSort(points, 0, num_elements);
+    int ranNum = rand() % (used);
+
+
+    QuickSort(points, 0, num_elements, ranNum);
     for (int i = 0; i < num_elements; i++) {
         printf("\n");
         printf("%s %s %3s-%d-%d %f %c %d", points[i].Fname, points[i].Lname, points[i].MonthOfBirth,
