@@ -73,7 +73,6 @@ int compare(Point* a, Point* b) {
         return a_month - b_month;
     }
 
-
     if (a->DayOfBirth != b->DayOfBirth) {
         if (is_valid_day(a->DayOfBirth, a_month, a->YearOfBirth) && is_valid_day(b->DayOfBirth, b_month, b->YearOfBirth)) {
             return a->DayOfBirth - b->DayOfBirth;
@@ -90,6 +89,8 @@ int compare(Point* a, Point* b) {
         return cmp_result;
     }
 
+
+
     int GPA_result = strcasecmp(a->Gpa, b->Gpa);
     if(GPA_result !=0){
         return GPA_result;
@@ -103,7 +104,6 @@ int compare(Point* a, Point* b) {
     if (a->Toefl != b->Toefl) {
         return a->Toefl - b->Toefl;
     }
-
 
 
     return 0;
@@ -204,6 +204,11 @@ int main(int argc, char **argv) {
         }
         if(points[i].Toefl < 0 || points[i].Toefl>120){
             printf("COMP2510ERROR: INVALID TOEFL SCORE\n");
+            exit(1);
+        }
+
+        if(atoi(points[i].Gpa)<0 || atoi(points[i].Gpa)>4.8){
+            printf("COMP2510ERROR: Gpa out of bound\n");
             exit(1);
         }
 
