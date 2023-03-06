@@ -10,7 +10,7 @@ typedef struct point {
     char MonthOfBirth[3];
     int YearOfBirth;
     int DayOfBirth;
-    char Gpa[4];
+    char Gpa[6];
     char DI;
     int Toefl;
 } Point;
@@ -135,16 +135,19 @@ void QuickSort(Point* arr, int start, int end) {
 }
 
 
-
-
 int isFileEmpty(FILE *f) {
     int c;
     while ((c = fgetc(f)) != EOF) {
-        if (!isspace(c)) {
+        if (c == '\n') {
+            // Empty line found, return 0
+            return 0;
+        } else if (!isspace(c)) {
+            // Non-whitespace character found, return 0
             ungetc(c, f);
             return 0;
         }
     }
+    // End of file reached, return 1
     return 1;
 }
 
@@ -181,7 +184,16 @@ int main(int argc, char **argv) {
 
     while(fscanf(fip, "%s %s %3s-%d-%d %s %c %d", points[i].Fname, points[i].Lname, points[i].MonthOfBirth,
                  &points[i].DayOfBirth, &points[i].YearOfBirth, points[i].Gpa, &points[i].DI,
-                 &points[i].Toefl) != EOF){
+                 &points[i].Toefl) != EOF) {
+
+        if(strlen(points[i].Fname) == 0 && strlen(points[i].Lname) == 0 && strlen(points[i].MonthOfBirth) == 0 &&
+           strlen(points[i].Gpa) == 0 && points[i].DI == '\0' && points[i].Toefl == 0){
+            printf("COMP2510ERROR: Empty line or some field missing\n");
+            exit(1);
+        }
+
+
+
         if(points[i].YearOfBirth < 1950 || points[i].YearOfBirth >2010)
         {
             printf("COMP2510ERROR: invalid year\n");
@@ -212,6 +224,10 @@ int main(int argc, char **argv) {
             exit(1);
         }
 
+        if(points[i].DI == 'I' && points[i].Toefl == 0){
+            printf("COMP2510ERROR: International student must have TOEFL SCORE\n");
+            exit(1);
+        }
         used++;
         num_elements++;
 
@@ -221,8 +237,6 @@ int main(int argc, char **argv) {
         }
         i++;
     }
-
-
     Point *new_points = (Point *) malloc(sizeof(Point) * num_elements);
     for (int i = 0; i < num_elements; i++) {
         new_points[i] = points[i];
@@ -233,6 +247,8 @@ int main(int argc, char **argv) {
 
     QuickSort(points, 0, num_elements-1);
     for (int i = 0; i < num_elements; i++) {
+
+
         if(n==1){
             if(points[i].DI == 'D'){
                 if (points[i].Toefl != 0) {
@@ -253,9 +269,8 @@ int main(int argc, char **argv) {
                     fprintf(fop, "%s %s %3s-%d-%d %s %c\n", points[i].Fname, points[i].Lname, points[i].MonthOfBirth,
                             points[i].DayOfBirth, points[i].YearOfBirth, points[i].Gpa, points[i].DI);
                 }
-
             }
-        } else {
+        } else if(n==3) {
             if (points[i].Toefl != 0) {
                 fprintf(fop, "%s %s %3s-%d-%d %s %c %d\n", points[i].Fname, points[i].Lname, points[i].MonthOfBirth,
                         points[i].DayOfBirth, points[i].YearOfBirth, points[i].Gpa, points[i].DI, points[i].Toefl);
