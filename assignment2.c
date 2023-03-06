@@ -5,12 +5,12 @@
 
 
 typedef struct point {
-    char Fname[20];
-    char Lname[20];
+    char Fname[40];
+    char Lname[30];
     char MonthOfBirth[3];
     int YearOfBirth;
     int DayOfBirth;
-    char Gpa[7];
+    char Gpa[4];
     char DI;
     int Toefl;
 } Point;
