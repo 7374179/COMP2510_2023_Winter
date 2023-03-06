@@ -42,7 +42,7 @@ int is_valid_day(int day, int month, int year) {
             }
         }
     }
-    return 1; // day is valid
+    return 1;
 }
 
 
@@ -100,6 +100,10 @@ int compare(Point* a, Point* b) {
         return nationalityStatus;
     }
 
+    if (a->Toefl != b->Toefl) {
+        return a->Toefl - b->Toefl;
+    }
+
 
 
     return 0;
@@ -136,12 +140,12 @@ void QuickSort(Point* arr, int start, int end) {
 int isFileEmpty(FILE *f) {
     int c;
     while ((c = fgetc(f)) != EOF) {
-        if (!isspace(c)) { // if the character is not a white space character
-            ungetc(c, f); // put it back into the stream
-            return 0; // the file is not empty
+        if (!isspace(c)) {
+            ungetc(c, f);
+            return 0;
         }
     }
-    return 1; // the file is empty or contains only white space characters
+    return 1;
 }
 
 int main(int argc, char **argv) {
@@ -178,11 +182,22 @@ int main(int argc, char **argv) {
     while(fscanf(fip, "%s %s %3s-%d-%d %s %c %d", points[i].Fname, points[i].Lname, points[i].MonthOfBirth,
                  &points[i].DayOfBirth, &points[i].YearOfBirth, points[i].Gpa, &points[i].DI,
                  &points[i].Toefl) != EOF){
+        if(points[i].YearOfBirth < 1950 || points[i].YearOfBirth >2010)
+        {
+            printf("COMP2510ERROR: invalid year\n");
+            exit(1);
+        }
         int a = is_valid_day(points[i].DayOfBirth, month_to_int(points[i].MonthOfBirth), points[i].YearOfBirth);
         if(points[i].DI == 'D' && points[i].Toefl!=0){
             printf("COMP2510ERROR: Domestic student do not have TOEFL score\n");
             exit(1);
         }
+
+        if(points[i].DI != 'D' && points[i].DI != 'I'){
+            printf("COMP2510ERROR: Student can be only international or domestic\n");
+            exit(1);
+        }
+
         if(a != 1){
             printf("COMP2510ERROR: INVALID DATE\n");
             exit(1);
