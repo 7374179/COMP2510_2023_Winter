@@ -1,18 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 #include <string.h>
+#include <ctype.h>
 
-//#define Jan 1, Feb 2, Mar 3, Apr 4, May 5, Jun 6, Jul 7, Aug 8, Sep 9, Oct 10, Nov 11, Dec 12
 
 typedef struct point {
     char Fname[20];
     char Lname[20];
-    char MonthOfBirth[5];
+    char MonthOfBirth[3];
     int YearOfBirth;
     int DayOfBirth;
-    float Gpa;
-    char DI[2];
+    char Gpa[7];
+    char DI;
     int Toefl;
 } Point;
 
@@ -22,207 +21,187 @@ void swap(Point *a, Point *b) {
     *b = temp;
 }
 
-void QuickSort(Point *arr, int start, int end, int random) {
-    if (start >= end) {
-        return;
+int is_valid_day(int day, int month, int year) {
+    if (day < 1 || day > 31) {
+        return 0;
     }
-
-    //1. YearOfBirth 비교
-    int key = start;
-    int pl = start;
-    int pr = end - 1;
-    Point tmp;
-//    int ran = Random(start, end);
-//    srand(time(NULL));  //random 숫자때문에 정렬이 자꾸 엇나가는듯
-//    int ranNum = rand() % (end - start+1);
-
-    int pivot = arr[random].YearOfBirth;
-    char pivot1[5];
-    strcpy(pivot1, arr[random].MonthOfBirth);
-    int pivot2 = arr[random].DayOfBirth;
-//    char pivot3 =  arr[random].Lname;
-    char pivot3[5];   // Example size of character array
-    strcpy(pivot3, arr[random].Lname);
-    while (pl <= pr) {
-        while (arr[pl].YearOfBirth < pivot) {
-//        while (arr[pl].YearOfBirth < pivot || (arr[pl].YearOfBirth == pivot && arr[pl].DayOfBirth < pivot2)) {
-            pl++;
-        }
-        while (arr[pr].YearOfBirth > pivot) {
-//        while (arr[pr].YearOfBirth > pivot || (arr[pr].YearOfBirth == pivot && arr[pr].DayOfBirth > pivot2)) {
-            pr--;
-        }
-        if (pl <= pr) {
-            swap(&arr[pl], &arr[pr]);
-            pl++;
-            pr--;
-        }
-//    if (start < pr) QuickSort(arr, start, pr, random);
-//    if (pl < end) QuickSort(arr, pl, end, random);
-
-        if (pr - start < end - pl) {
-            QuickSort(arr, start, pr, random);
-            start = pl;
-        } else {
-            QuickSort(arr, pl, end, random);
-            end = pr + 1;
+    if (month == 4 || month == 6 || month == 9 || month == 11) {
+        if (day > 30) {
+            return 0;
         }
     }
-
-//    // 2. MonthOfBirth 비교
-//    pl = start;
-//    pr = end - 1;
-////    char arr[pl].MonthOfBirth[4] = "Jan";   // Example month string
-//    int pivot1m;
-//
-//    if (strcmp(arr[pl].MonthOfBirth, "Jan") == 0) {
-//        pivot1m = Jan;
-//    }
-//    else if (strcmp(arr[pl].MonthOfBirth, "Feb") == 0) {
-//        pivot1m = Feb;
-//    }
-//    else if (strcmp(arr[pl].MonthOfBirth, "Mar") == 0) {
-//        pivot1m = Mar;
-//    }
-//    else if (strcmp(arr[pl].MonthOfBirth, "Apr") == 0) {
-//        pivot1m = Apr;
-//    }
-//    else if (strcmp(arr[pl].MonthOfBirth, "May") == 0) {
-//        pivot1m = May;
-//    }
-//    else if (strcmp(arr[pl].MonthOfBirth, "Jun") == 0) {
-//        pivot1m = Jun;
-//    }
-//    else if (strcmp(arr[pl].MonthOfBirth, "Jul") == 0) {
-//        pivot1m = Jul;
-//    }
-//    else if (strcmp(arr[pl].MonthOfBirth, "Aug") == 0) {
-//        pivot1m = Aug;
-//    }
-//    else if (strcmp(arr[pl].MonthOfBirth, "Sep") == 0) {
-//        pivot1m = Sep;
-//    }
-//    else if (strcmp(arr[pl].MonthOfBirth, "Oct") == 0) {
-//        pivot1m = Oct;
-//    }
-//    else if (strcmp(arr[pl].MonthOfBirth, "Nov") == 0) {
-//        pivot1m = Nov;
-//    }
-//    else if (strcmp(arr[pl].MonthOfBirth, "Dec") == 0) {
-//        pivot1m = Dec;
-//    }
-//    while (pl <= pr) {
-//        while (pivot1m < pivot1) {
-////        while (arr[pl].YearOfBirth < pivot || (arr[pl].YearOfBirth == pivot && arr[pl].DayOfBirth < pivot1)) {
-//            pl++;
-//        }
-//        while (pivot1m > pivot1) {
-////        while (arr[pr].YearOfBirth > pivot || (arr[pr].YearOfBirth == pivot && arr[pr].DayOfBirth > pivot1)) {
-//            pr--;
-//        }
-//        if (pl <= pr) {
-//            swap(&arr[pl], &arr[pr]);
-//            pl++;
-//            pr--;
-//        }
-////    if (start < pr) QuickSort(arr, start, pr);
-////    if (pl < end) QuickSort(arr, pl, end);
-//
-//        if (pr - start < end - pl) {
-//            QuickSort(arr, start, pr, random);
-//            start = pl;
-//        } else {
-//            QuickSort(arr, pl, end, random);
-//            end = pr + 1;
-//        }
-//    }
-
-    //3. DayOfBirth 비교
-    pl = start;
-    pr = end - 1;
-    while (pl <= pr) {
-        while (arr[pl].DayOfBirth < pivot2) {
-//        while (arr[pl].YearOfBirth < pivot || (arr[pl].YearOfBirth == pivot && arr[pl].DayOfBirth < pivot2)) {
-            pl++;
+    else if (month == 2) {
+        if (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)) {
+            if (day > 29) {
+                return 0;
+            }
         }
-        while (arr[pr].DayOfBirth > pivot2) {
-//        while (arr[pr].YearOfBirth > pivot || (arr[pr].YearOfBirth == pivot && arr[pr].DayOfBirth > pivot2)) {
-            pr--;
+        else {
+            if (day > 28) {
+                return 0;
+            }
         }
-        if (pl <= pr) {
-            swap(&arr[pl], &arr[pr]);
-            pl++;
-            pr--;
-        }
-//    if (start < pr) QuickSort(arr, start, pr);
-//    if (pl < end) QuickSort(arr, pl, end);
+    }
+    return 1; // day is valid
+}
 
-        if (pr - start < end - pl) {
-            QuickSort(arr, start, pr, random);
-            start = pl;
-        } else {
-            QuickSort(arr, pl, end, random);
-            end = pr + 1;
+
+int month_to_int(const char* month_str) {
+    static const char* month_names[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                                        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+
+
+    for (int i = 0; i < 12; i++) {
+        if (strcmp(month_str, month_names[i]) == 0) {
+            return i + 1;
+        }
+    }
+    printf("COMP2510ERROR: INVALID MONTH\n");
+    exit(1);
+}
+
+int compare(Point* a, Point* b) {
+    // Compare year of birth
+    if (a->YearOfBirth != b->YearOfBirth) {
+        return a->YearOfBirth - b->YearOfBirth;
+    }
+
+    // Compare month of birth
+    int a_month = month_to_int(a->MonthOfBirth);
+    int b_month = month_to_int(b->MonthOfBirth);
+    if (a_month != b_month) {
+        return a_month - b_month;
+    }
+
+
+    if (a->DayOfBirth != b->DayOfBirth) {
+        if (is_valid_day(a->DayOfBirth, a_month, a->YearOfBirth) && is_valid_day(b->DayOfBirth, b_month, b->YearOfBirth)) {
+            return a->DayOfBirth - b->DayOfBirth;
         }
     }
 
-    //4. Last name 비교
-//    pl = start;     //여기가 문제임. pl과 pr이 start와 end-1로 초기화가 되야되는데 안됨.
-//    pr = end - 1;
-    while (pl <= pr) {
-        while (arr[pl].Lname < pivot3) {
-//        while (arr[pl].YearOfBirth < pivot || (arr[pl].YearOfBirth == pivot && arr[pl].DayOfBirth < pivot3)) {
-            pl++;
-        }
-        while (arr[pr].Lname > pivot3) {
-//        while (arr[pr].YearOfBirth > pivot || (arr[pr].YearOfBirth == pivot && arr[pr].DayOfBirth > pivot3)) {
-            pr--;
-        }
-        if (pl <= pr) {
-            swap(&arr[pl], &arr[pr]);
-            pl++;
-            pr--;
-        }
-//    if (start < pr) QuickSort(arr, start, pr);
-//    if (pl < end) QuickSort(arr, pl, end);
+    int cmp_result1 = strcasecmp(a->Lname, b->Lname);
+    if (cmp_result1 != 0) {
+        return cmp_result1;
+    }
 
-        if (pr - start < end - pl) {
-            QuickSort(arr, start, pr, random);
-            start = pl;
-        } else {
-            QuickSort(arr, pl, end, random);
-            end = pr + 1;
+    int cmp_result = strcasecmp(a->Fname, b->Fname);
+    if (cmp_result != 0) {
+        return cmp_result;
+    }
+
+    int GPA_result = strcasecmp(a->Gpa, b->Gpa);
+    if(GPA_result !=0){
+        return GPA_result;
+    }
+
+    int nationalityStatus = strcasecmp(&a->DI, &b->DI);
+    if(nationalityStatus!=0){
+        return nationalityStatus;
+    }
+
+
+
+    return 0;
+}
+
+
+void QuickSort(Point* arr, int start, int end) {
+    if (start < end) {
+        int pivot_index = rand() % (end - start + 1) + start;
+        Point pivot = arr[pivot_index];
+        swap(&arr[start], &arr[pivot_index]);
+        int i = start + 1;
+        int j = end;
+        while (i <= j) {
+            while (i <= j && compare(&arr[i], &pivot) <= 0) {
+                i++;
+            }
+            while (i <= j && compare(&arr[j], &pivot) > 0) {
+                j--;
+            }
+            if (i < j) {
+                swap(&arr[i], &arr[j]);
+            }
         }
+        swap(&arr[start], &arr[j]);
+        QuickSort(arr, start, j - 1);
+        QuickSort(arr, j + 1, end);
     }
 }
 
-int main(int argc, char **argv){
-//int main() {
+
+
+
+int isFileEmpty(FILE *f) {
+    int c;
+    while ((c = fgetc(f)) != EOF) {
+        if (!isspace(c)) { // if the character is not a white space character
+            ungetc(c, f); // put it back into the stream
+            return 0; // the file is not empty
+        }
+    }
+    return 1; // the file is empty or contains only white space characters
+}
+
+int main(int argc, char **argv) {
     FILE *fip, *fop;
     fip = fopen(argv[1], "r");
-    fop = fopen(argv[2],"w");
-//    fip = fopen("input.txt", "r");
-//    fop = fopen("output.txt", "w");
-    int count = 0;
+    fop = fopen(argv[2], "w");
+    int n = atoi(argv[3]);
+
     Point *points;
     int capacity = 2;
     int used = 0;
     int num_elements = 0;
 
+    if (fip == NULL) {
+        printf("COMP2510ERROR: input file cannot be opened\n");
+        return 1;
+    }
+
+    if (fop == NULL) {
+        printf("COMP2510ERROR: output file cannot be opened\n");
+        return 1;
+    }
+
+    if (isFileEmpty(fip)) {
+        printf("COMP2510ERROR: input file is empty or contains only white space characters\n");
+        return 1;
+    }
+
     points = (Point *) malloc(sizeof(Point) * capacity);
 
-    for (int i = 0; fscanf(fip, "%s %s %3s-%d-%d %f %s %d", points[i].Fname, points[i].Lname, points[i].MonthOfBirth,
-                           &points[i].DayOfBirth, &points[i].YearOfBirth, &points[i].Gpa, points[i].DI,
-                           &points[i].Toefl) != EOF; i++) {
+
+    int i =0;
+
+    while(fscanf(fip, "%s %s %3s-%d-%d %s %c %d", points[i].Fname, points[i].Lname, points[i].MonthOfBirth,
+                 &points[i].DayOfBirth, &points[i].YearOfBirth, points[i].Gpa, &points[i].DI,
+                 &points[i].Toefl) != EOF){
+        int a = is_valid_day(points[i].DayOfBirth, month_to_int(points[i].MonthOfBirth), points[i].YearOfBirth);
+        if(points[i].DI == 'D' && points[i].Toefl!=0){
+            printf("COMP2510ERROR: Domestic student do not have TOEFL score\n");
+            exit(1);
+        }
+        if(a != 1){
+            printf("COMP2510ERROR: INVALID DATE\n");
+            exit(1);
+        }
+        if(points[i].Toefl < 0 || points[i].Toefl>120){
+            printf("COMP2510ERROR: INVALID TOEFL SCORE\n");
+            exit(1);
+        }
+
         used++;
         num_elements++;
 
-        if (used == capacity) {
+        if (used > capacity) {
             capacity = capacity * 2;
             points = (Point *) realloc(points, sizeof(Point) * capacity);
         }
-//        printf("%s", points[i].Fname);
+        i++;
     }
+
 
     Point *new_points = (Point *) malloc(sizeof(Point) * num_elements);
     for (int i = 0; i < num_elements; i++) {
@@ -231,23 +210,42 @@ int main(int argc, char **argv){
     free(points);
     points = new_points;
 
-    int ranNum = rand() % (used);
 
-
-    QuickSort(points, 0, num_elements, ranNum);
-//    QuickSort_day(points, 0, num_elements, ranNum);
-
-
-//    for (int i = 0; i < num_elements; i++) {
-//        printf("\n");
-//        printf("%s %s %3s-%d-%d %.1f %c %d", points[i].Fname, points[i].Lname, points[i].MonthOfBirth,
-//               points[i].DayOfBirth, points[i].YearOfBirth, points[i].Gpa, points[i].DI, points[i].Toefl);
-//    }
+    QuickSort(points, 0, num_elements-1);
     for (int i = 0; i < num_elements; i++) {
-//        printf("\n");
-        fprintf(fop,"%s %s %3s-%d-%d %.1f %s %d", points[i].Fname, points[i].Lname, points[i].MonthOfBirth,
-               points[i].DayOfBirth, points[i].YearOfBirth, points[i].Gpa, points[i].DI, points[i].Toefl);
-        fprintf(fop,"\n");
+        if(n==1){
+            if(points[i].DI == 'D'){
+                if (points[i].Toefl != 0) {
+                    fprintf(fop, "%s %s %3s-%d-%d %s %c %d\n", points[i].Fname, points[i].Lname, points[i].MonthOfBirth,
+                            points[i].DayOfBirth, points[i].YearOfBirth, points[i].Gpa, points[i].DI, points[i].Toefl);
+                } else {
+                    fprintf(fop, "%s %s %3s-%d-%d %s %c\n", points[i].Fname, points[i].Lname, points[i].MonthOfBirth,
+                            points[i].DayOfBirth, points[i].YearOfBirth, points[i].Gpa, points[i].DI);
+                }
+            }
+        }
+        else if(n==2){
+            if(points[i].DI == 'I'){
+                if (points[i].Toefl != 0) {
+                    fprintf(fop, "%s %s %3s-%d-%d %s %c %d\n", points[i].Fname, points[i].Lname, points[i].MonthOfBirth,
+                            points[i].DayOfBirth, points[i].YearOfBirth, points[i].Gpa, points[i].DI, points[i].Toefl);
+                } else {
+                    fprintf(fop, "%s %s %3s-%d-%d %s %c\n", points[i].Fname, points[i].Lname, points[i].MonthOfBirth,
+                            points[i].DayOfBirth, points[i].YearOfBirth, points[i].Gpa, points[i].DI);
+                }
+
+            }
+        } else {
+            if (points[i].Toefl != 0) {
+                fprintf(fop, "%s %s %3s-%d-%d %s %c %d\n", points[i].Fname, points[i].Lname, points[i].MonthOfBirth,
+                        points[i].DayOfBirth, points[i].YearOfBirth, points[i].Gpa, points[i].DI, points[i].Toefl);
+            } else {
+                fprintf(fop, "%s %s %3s-%d-%d %s %c\n", points[i].Fname, points[i].Lname, points[i].MonthOfBirth,
+                        points[i].DayOfBirth, points[i].YearOfBirth, points[i].Gpa, points[i].DI);
+            }
+
+        }
+
     }
 
     fclose(fip);
