@@ -226,40 +226,51 @@ int main(int argc, char **argv) {
         if (n == 1) {
             if (points[i].DI == 'D') {
                 if (points[i].Toefl != 0) {
-                    fprintf(fop, "%s %s %3s-%d-%d %s %c %d\n", points[i].Fname, points[i].Lname,
+                    fprintf(fop, "%s %s %3s-%d-%d %s %c %d", points[i].Fname, points[i].Lname,
                             points[i].MonthOfBirth,
                             points[i].DayOfBirth, points[i].YearOfBirth, points[i].Gpa, points[i].DI,
                             points[i].Toefl);
                 } else {
-                    fprintf(fop, "%s %s %3s-%d-%d %s %c\n", points[i].Fname, points[i].Lname,
+                    fprintf(fop, "%s %s %3s-%d-%d %s %c", points[i].Fname, points[i].Lname,
                             points[i].MonthOfBirth,
                             points[i].DayOfBirth, points[i].YearOfBirth, points[i].Gpa, points[i].DI);
+                }
+                if(i!= num_elements - 1){
+                    fprintf(fop,"\n");
                 }
             }
         } else if (n == 2) {
             if (points[i].DI == 'I') {
                 if (points[i].Toefl != 0) {
-                    fprintf(fop, "%s %s %3s-%d-%d %s %c %d\n", points[i].Fname, points[i].Lname,
+                    fprintf(fop, "%s %s %3s-%d-%d %s %c %d", points[i].Fname, points[i].Lname,
                             points[i].MonthOfBirth,
                             points[i].DayOfBirth, points[i].YearOfBirth, points[i].Gpa, points[i].DI,
                             points[i].Toefl);
                 } else {
-                    fprintf(fop, "%s %s %3s-%d-%d %s %c\n", points[i].Fname, points[i].Lname,
+                    fprintf(fop, "%s %s %3s-%d-%d %s %c", points[i].Fname, points[i].Lname,
                             points[i].MonthOfBirth,
                             points[i].DayOfBirth, points[i].YearOfBirth, points[i].Gpa, points[i].DI);
+                }
+
+                if(i!= num_elements - 1){
+                    fprintf(fop,"\n");
                 }
 
             }
         } else if (n == 3) {
             if (points[i].Toefl != 0) {
-                fprintf(fop, "%s %s %3s-%d-%d %s %c %d\n", points[i].Fname, points[i].Lname,
+                fprintf(fop, "%s %s %3s-%d-%d %s %c %d", points[i].Fname, points[i].Lname,
                         points[i].MonthOfBirth,
                         points[i].DayOfBirth, points[i].YearOfBirth, points[i].Gpa, points[i].DI,
                         points[i].Toefl);
             } else {
-                fprintf(fop, "%s %s %3s-%d-%d %s %c\n", points[i].Fname, points[i].Lname,
+                fprintf(fop, "%s %s %3s-%d-%d %s %c", points[i].Fname, points[i].Lname,
                         points[i].MonthOfBirth,
                         points[i].DayOfBirth, points[i].YearOfBirth, points[i].Gpa, points[i].DI);
+            }
+
+            if(i!= num_elements - 1){
+                fprintf(fop,"\n");
             }
         }
     }
