@@ -180,8 +180,6 @@ int main(int argc, char **argv) {
             }
         }
 
-
-
         if (points[i].YearOfBirth < 1950 || points[i].YearOfBirth > 2010) {
             printf("COMP2510ERROR: invalid year\n");
             exit(1);
@@ -200,7 +198,7 @@ int main(int argc, char **argv) {
             exit(1);
         }
 
-        if (atoi(points[i].Gpa) < 0 || atoi(points[i].Gpa) > 4.8) {
+        if (atoi(points[i].Gpa) < 0 || atoi(points[i].Gpa) > 4.3) {
             printf("COMP2510ERROR: Gpa out of bound\n");
             exit(1);
         }
@@ -225,40 +223,56 @@ int main(int argc, char **argv) {
     points = new_points;
 
     QuickSort(points, 0, num_elements - 1);
-    for (int i = 0; i < num_elements; i++) {
+    for (int i = 1; i <= num_elements; i++) {
         if (n == 1) {
-            if (points[i].DI == 'D') {
-                    fprintf(fop, "%s %s %3s-%d-%d %s %c", points[i].Fname, points[i].Lname,
-                            points[i].MonthOfBirth,
-                            points[i].DayOfBirth, points[i].YearOfBirth, points[i].Gpa, points[i].DI);
+            if (points[i-1].DI == 'D') {
+                int ttmp1 = strcmp(points[i-1].Fname,points[i].Fname);
+                int ttmp2 = strcmp(points[i-1].Lname,points[i].Lname);
+                if(ttmp1 ==0 && ttmp2==0){
+                    continue;
+                }
+                fprintf(fop, "%s %s %3s-%d-%d %s %c", points[i-1].Fname, points[i-1].Lname,
+                        points[i-1].MonthOfBirth,
+                        points[i-1].DayOfBirth, points[i-1].YearOfBirth, points[i-1].Gpa, points[i-1].DI);
                 if(i!= num_elements - 1){
                     fprintf(fop,"\n");
                 }
             }
         } else if (n == 2) {
-            if (points[i].DI == 'I') {
-                    fprintf(fop, "%s %s %3s-%d-%d %s %c %d", points[i].Fname, points[i].Lname,
-                            points[i].MonthOfBirth,
-                            points[i].DayOfBirth, points[i].YearOfBirth, points[i].Gpa, points[i].DI,
-                            points[i].Toefl);
+            if (points[i-1].DI == 'I') {
+                int ttmp1 = strcmp(points[i-1].Fname,points[i].Fname);
+                int ttmp2 = strcmp(points[i-1].Lname,points[i].Lname);
+                if(ttmp1 ==0 && ttmp2==0){
+                    continue;
+                }
+                fprintf(fop, "%s %s %3s-%d-%d %s %c %d", points[i-1].Fname, points[i-1].Lname,
+                        points[i-1].MonthOfBirth,
+                        points[i-1].DayOfBirth, points[i-1].YearOfBirth, points[i-1].Gpa, points[i-1].DI,
+                        points[i-1].Toefl);
                 if(i!= num_elements - 1){
                     fprintf(fop,"\n");
                 }
 
             }
         } else if (n == 3) {
-            if (points[i].DI == 'I') {
-                fprintf(fop, "%s %s %3s-%d-%d %s %c %d", points[i].Fname, points[i].Lname,
-                        points[i].MonthOfBirth,
-                        points[i].DayOfBirth, points[i].YearOfBirth, points[i].Gpa, points[i].DI,
-                        points[i].Toefl);
-            } else if(points[i].DI == 'D'){
-                fprintf(fop, "%s %s %3s-%d-%d %s %c", points[i].Fname, points[i].Lname,
-                        points[i].MonthOfBirth,
-                        points[i].DayOfBirth, points[i].YearOfBirth, points[i].Gpa, points[i].DI);
+            int ttmp1 = strcmp(points[i-1].Fname,points[i].Fname);
+            int ttmp2 = strcmp(points[i-1].Lname,points[i].Lname);
+            if(ttmp1 ==0 && ttmp2==0){
+                continue;
+            }
+            if (points[i-1].DI == 'I') {
+                fprintf(fop, "%s %s %3s-%d-%d %s %c %d", points[i-1].Fname, points[i-1].Lname,
+                        points[i-1].MonthOfBirth,
+                        points[i-1].DayOfBirth, points[i-1].YearOfBirth, points[i-1].Gpa, points[i-1].DI,
+                        points[i-1].Toefl);
+            } else if(points[i-1].DI == 'D'){
+                fprintf(fop, "%s %s %3s-%d-%d %s %c", points[i-1].Fname, points[i-1].Lname,
+                        points[i-1].MonthOfBirth,
+                        points[i-1].DayOfBirth, points[i-1].YearOfBirth, points[i-1].Gpa, points[i-1].DI);
             }
 
-            if(i!= num_elements - 1){
+//            if(i!= num_elements - 1){
+            if(i!= num_elements){
                 fprintf(fop,"\n");
             }
         }
