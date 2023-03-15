@@ -141,6 +141,10 @@ int main(int argc, char **argv) {
     fip = fopen(argv[1], "r");
     fop = fopen(argv[2], "w");
     int n = atoi(argv[3]);
+    if(n<1 || n>3){
+        printf("COMP2510ERROR: Invalid option provided\n");
+        return 1;
+    }
     Point *points;
     int capacity = 2;
     int used = 0;
@@ -228,7 +232,10 @@ int main(int argc, char **argv) {
             if (points[i-1].DI == 'D') {
                 int ttmp1 = strcmp(points[i-1].Fname,points[i].Fname);
                 int ttmp2 = strcmp(points[i-1].Lname,points[i].Lname);
-                if(ttmp1 ==0 && ttmp2==0){
+                int ttmp3 = points[i-1].DayOfBirth == points[i].DayOfBirth;
+                int ttmp4 = strcmp(points[i-1].MonthOfBirth,points[i].MonthOfBirth);
+                int ttmp5 = points[i-1].YearOfBirth == points[i].YearOfBirth;
+                if(ttmp1 ==0 && ttmp2==0 && ttmp3 ==1 && ttmp4==0 && ttmp5 ==1){
                     continue;
                 }
                 fprintf(fop, "%s %s %3s-%d-%d %s %c", points[i-1].Fname, points[i-1].Lname,
@@ -242,7 +249,10 @@ int main(int argc, char **argv) {
             if (points[i-1].DI == 'I') {
                 int ttmp1 = strcmp(points[i-1].Fname,points[i].Fname);
                 int ttmp2 = strcmp(points[i-1].Lname,points[i].Lname);
-                if(ttmp1 ==0 && ttmp2==0){
+                int ttmp3 = points[i-1].DayOfBirth == points[i].DayOfBirth;
+                int ttmp4 = strcmp(points[i-1].MonthOfBirth,points[i].MonthOfBirth);
+                int ttmp5 = points[i-1].YearOfBirth == points[i].YearOfBirth;
+                if(ttmp1 ==0 && ttmp2==0 && ttmp3 ==1 && ttmp4==0 && ttmp5 ==1){
                     continue;
                 }
                 fprintf(fop, "%s %s %3s-%d-%d %s %c %d", points[i-1].Fname, points[i-1].Lname,
@@ -257,7 +267,10 @@ int main(int argc, char **argv) {
         } else if (n == 3) {
             int ttmp1 = strcmp(points[i-1].Fname,points[i].Fname);
             int ttmp2 = strcmp(points[i-1].Lname,points[i].Lname);
-            if(ttmp1 ==0 && ttmp2==0){
+            int ttmp3 = points[i-1].DayOfBirth == points[i].DayOfBirth;
+            int ttmp4 = strcmp(points[i-1].MonthOfBirth,points[i].MonthOfBirth);
+            int ttmp5 = points[i-1].YearOfBirth == points[i].YearOfBirth;
+            if(ttmp1 ==0 && ttmp2==0 && ttmp3 ==1 && ttmp4==0 && ttmp5 ==1){
                 continue;
             }
             if (points[i-1].DI == 'I') {
