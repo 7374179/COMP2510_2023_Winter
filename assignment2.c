@@ -160,16 +160,26 @@ int main(int argc, char **argv) {
     points = (Point *) malloc(sizeof(Point) * capacity);
     int i = 0;
 
-    while (fscanf(fip, "%s %s %3s-%d-%d %s %c %d", points[i].Fname, points[i].Lname, points[i].MonthOfBirth,
-                  &points[i].DayOfBirth, &points[i].YearOfBirth, points[i].Gpa, &points[i].DI,
-                  &points[i].Toefl) != EOF) {
+    while (fscanf(fip, "%s %s %3s-%d-%d %s %c", points[i].Fname, points[i].Lname, points[i].MonthOfBirth,
+                  &points[i].DayOfBirth, &points[i].YearOfBirth, points[i].Gpa, &points[i].DI) != EOF) {
 
-        if (strlen(points[i].Fname) == 0 && strlen(points[i].Lname) == 0 &&
-            strlen(points[i].MonthOfBirth) == 0 &&
-            strlen(points[i].Gpa) == 0 && points[i].DI == '\0' && points[i].Toefl == 0) {
-            printf("COMP2510ERROR: Empty line or some field missing\n");
-            exit(1);
+        if(points[i].DI == 'I') {
+            if (fscanf(fip, "%d", &points[i].Toefl) != 1) {
+                printf("COMP2510ERROR: Missing TOEFL score\n");
+                exit(1);
+            }
+            if (points[i].Toefl < 0 || points[i].Toefl > 120) {
+                printf("COMP2510ERROR: INVALID TOEFL SCORE\n");
+                exit(1);
+            }
         }
+        if(points[i].DI == 'D') {
+            if (fscanf(fip, "%d", &points[i].Toefl) == 1) {
+                printf("COMP2510ERROR: Domestic do not need toefl\n");
+                exit(1);
+            }
+        }
+
 
 
         if (points[i].YearOfBirth < 1950 || points[i].YearOfBirth > 2010) {
@@ -189,19 +199,12 @@ int main(int argc, char **argv) {
             printf("COMP2510ERROR: INVALID DATE\n");
             exit(1);
         }
-        if (points[i].Toefl < 0 || points[i].Toefl > 120) {
-            printf("COMP2510ERROR: INVALID TOEFL SCORE\n");
-            exit(1);
-        }
+
         if (atoi(points[i].Gpa) < 0 || atoi(points[i].Gpa) > 4.8) {
             printf("COMP2510ERROR: Gpa out of bound\n");
             exit(1);
         }
 
-        if (points[i].DI == 'I' && points[i].Toefl == 0) {
-            printf("COMP2510ERROR: International student must have TOEFL SCORE\n");
-            exit(1);
-        }
         used++;
         num_elements++;
 
@@ -225,45 +228,31 @@ int main(int argc, char **argv) {
     for (int i = 0; i < num_elements; i++) {
         if (n == 1) {
             if (points[i].DI == 'D') {
-                if (points[i].Toefl != 0) {
-                    fprintf(fop, "%s %s %3s-%d-%d %s %c %d", points[i].Fname, points[i].Lname,
-                            points[i].MonthOfBirth,
-                            points[i].DayOfBirth, points[i].YearOfBirth, points[i].Gpa, points[i].DI,
-                            points[i].Toefl);
-                } else {
                     fprintf(fop, "%s %s %3s-%d-%d %s %c", points[i].Fname, points[i].Lname,
                             points[i].MonthOfBirth,
                             points[i].DayOfBirth, points[i].YearOfBirth, points[i].Gpa, points[i].DI);
-                }
                 if(i!= num_elements - 1){
                     fprintf(fop,"\n");
                 }
             }
         } else if (n == 2) {
             if (points[i].DI == 'I') {
-                if (points[i].Toefl != 0) {
                     fprintf(fop, "%s %s %3s-%d-%d %s %c %d", points[i].Fname, points[i].Lname,
                             points[i].MonthOfBirth,
                             points[i].DayOfBirth, points[i].YearOfBirth, points[i].Gpa, points[i].DI,
                             points[i].Toefl);
-                } else {
-                    fprintf(fop, "%s %s %3s-%d-%d %s %c", points[i].Fname, points[i].Lname,
-                            points[i].MonthOfBirth,
-                            points[i].DayOfBirth, points[i].YearOfBirth, points[i].Gpa, points[i].DI);
-                }
-
                 if(i!= num_elements - 1){
                     fprintf(fop,"\n");
                 }
 
             }
         } else if (n == 3) {
-            if (points[i].Toefl != 0) {
+            if (points[i].DI == 'I') {
                 fprintf(fop, "%s %s %3s-%d-%d %s %c %d", points[i].Fname, points[i].Lname,
                         points[i].MonthOfBirth,
                         points[i].DayOfBirth, points[i].YearOfBirth, points[i].Gpa, points[i].DI,
                         points[i].Toefl);
-            } else {
+            } else if(points[i].DI == 'D'){
                 fprintf(fop, "%s %s %3s-%d-%d %s %c", points[i].Fname, points[i].Lname,
                         points[i].MonthOfBirth,
                         points[i].DayOfBirth, points[i].YearOfBirth, points[i].Gpa, points[i].DI);
