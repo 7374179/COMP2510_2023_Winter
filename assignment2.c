@@ -241,7 +241,7 @@ int main(int argc, char **argv) {
                 fprintf(fop, "%s %s %3s-%d-%d %s %c", points[i-1].Fname, points[i-1].Lname,
                         points[i-1].MonthOfBirth,
                         points[i-1].DayOfBirth, points[i-1].YearOfBirth, points[i-1].Gpa, points[i-1].DI);
-                if(i!= num_elements - 1){
+                if(i!= num_elements){
                     fprintf(fop,"\n");
                 }
             }
@@ -259,7 +259,7 @@ int main(int argc, char **argv) {
                         points[i-1].MonthOfBirth,
                         points[i-1].DayOfBirth, points[i-1].YearOfBirth, points[i-1].Gpa, points[i-1].DI,
                         points[i-1].Toefl);
-                if(i!= num_elements - 1){
+                if(i!= num_elements -1){
                     fprintf(fop,"\n");
                 }
 
