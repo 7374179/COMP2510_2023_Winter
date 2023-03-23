@@ -101,14 +101,30 @@ void *create_ll(size_t size){
 //  return NULL;
 }
 
+
 /**
    This function merge sorts the linked list.
  **/
-void sort(void *ll){
-    if(((List*)ll)->head == NULL || ((List*)ll)->head->next == NULL) {
+void sort(void *ll) {
+    List* list = (List*)ll;
+    if (list->head == NULL || list->head->next == NULL) {
         return;
-    }}
-
+    }
+    int n = sizeof(list);
+    for (int i = 0; i < n - 1; i++) {
+        Node* node1 = list->head;
+        Node* node2 = list->head->next;
+        for (int j = 0; j < n - i - 1; j++) {
+            if (node1->data > node2->data) {
+                void* temp = node1->data;
+                node1->data = node2->data;
+                node2->data = temp;
+            }
+            node1 = node1->next;
+            node2 = node2->next;
+        }
+    }
+}
 /**
    Do not modify the function signature of the main function
    including spacing.
@@ -137,17 +153,87 @@ int main(int argc, char** argv){ // Basically do NOT touch this line
 //    remove_node(ill, &rv);
 //    printf("%d\n", rv);
 
+//    List* ill = create_ll(sizeof(int));
+//    char i = 'a';
+//    add_node(ill, &i);
+//    i += 1;
+//    add_node(ill, &i);
+//    i += 1;
+//    add_node(ill, &i);
+//    sort(ill);
+//    int rv;
+//    remove_node(ill, &rv);
+//    printf("%c\n", rv);
+
     List* ill = create_ll(sizeof(int));
-    char i = 'a';
-    add_node(ill, &i);
-    i += 1;
-    add_node(ill, &i);
-    i += 1;
-    add_node(ill, &i);
+    int iarr[] = {5, 1, 8, 3, 7};
+    for (int i = 0; i < 5; i++) {
+        add_node(ill, &iarr[i]);
+    }
     sort(ill);
-    int rv;
-    remove_node(ill, &rv);
-    printf("%c\n", rv);
+    int ival;
+    while (ill->head) {
+        remove_node(ill, &ival);
+        printf("int: %d\n", ival);
+    }
+    free(ill);
+
+    // Test with shorts
+    List* sll = create_ll(sizeof(short));
+    short sarr[] = {5, 1, 8, 3, 7};
+    for (int i = 0; i < 5; i++) {
+        add_node(sll, &sarr[i]);
+    }
+    sort(sll);
+    short sval;
+    while (sll->head) {
+        remove_node(sll, &sval);
+        printf("short: %d\n", sval);
+    }
+    free(sll);
+
+    // Test with characters
+    List* cll = create_ll(sizeof(char));
+    char carr[] = {'c', 'a', 'e', 'b', 'd'};
+    for (int i = 0; i < 5; i++) {
+        add_node(cll, &carr[i]);
+    }
+    sort(cll);
+    char cval;
+    while (cll->head) {
+        remove_node(cll, &cval);
+        printf("char: %c\n", cval);
+    }
+    free(cll);
+
+    // Test with istr structs
+    List* istrl = create_ll(sizeof(istr));
+    istr istrarr[] = {{3, 4}, {1, 5}, {3, 2}, {1, 4}, {2, 1}};
+    for (int i = 0; i < 5; i++) {
+        add_node(istrl, &istrarr[i]);
+    }
+    sort(istrl);
+    istr istrval;
+    while (istrl->head) {
+        remove_node(istrl, &istrval);
+        printf("istr: %d, %d\n", istrval.x, istrval.y);
+    }
+    free(istrl);
+
+    // Test with cstr structs
+    List* cstrl = create_ll(sizeof(cstr));
+    cstr cstrarr[] = {{'a', 'b', 'c'}, {'a', 'a', 'a'}, {'b', 'a', 'c'}, {'a', 'b', 'a'}, {'a', 'c', 'c'}};
+    for (int i = 0; i < 5; i++) {
+        add_node(cstrl, &cstrarr[i]);
+    }
+    sort(cstrl);
+    cstr cstrval;
+    while (cstrl->head) {
+        remove_node(cstrl, &cstrval);
+        printf("cstr: %c, %c, %c\n", cstrval.x, cstrval.y, cstrval.z);
+    }
+    free(cstrl);
+
 
 
   
