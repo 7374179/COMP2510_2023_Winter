@@ -109,7 +109,13 @@ void merge_sort(Node** headRef, size_t size) {
 int add_node(void *ll, void *data){
     List* list = (List*) ll;
     Node* new_node = malloc(sizeof(Node));
+    if (!new_node) return 0;
+
     new_node->data = malloc(list->data_size);
+    if (!new_node->data) {
+        free(new_node);
+        return 0;
+    }
     memcpy(new_node->data, data, list->data_size);
     new_node->next = NULL;
 
@@ -194,4 +200,5 @@ int main(int argc, char** argv){ // Basically do NOT touch this line
 
 
     return 0;
+
 }
