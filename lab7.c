@@ -1,27 +1,103 @@
 #include <stdio.h>
-#include <malloc.h>
+#include <stdlib.h>
 #include <string.h>
-
 /**
    DO NOT CHANGE
    1st sample struct containing 2 integers
    When sorting use x first, then y.
 **/
 typedef struct{
-  int x;
-  int y;
+    int x;
+    int y;
 }istr;
 
 /**
    DO NOT CHANGE
    2nd sample struct containing 3 characters
-   When sorting use x first, then y, and finally z. 
+   When sorting use x first, then y, and finally z.
 **/
 typedef struct{
-  char x;
-  char y;
-  char z;
+    char x;
+    char y;
+    char z;
 }cstr;
+
+typedef struct node {
+    void *data;
+    struct node *next;
+} Node;
+
+typedef struct {
+    Node *head;
+    size_t data_size;
+} List;
+
+int compare(void* a, void* b, size_t size) {
+    if (size == sizeof(int)) {
+        int x = *(int*)a;
+        int y = *(int*)b;
+        return y - x;
+    } else if (size == sizeof(short)) {
+        short x = *(short*)a;
+        short y = *(short*)b;
+        return y - x;
+    } else if (size == sizeof(char)) {
+        char x = *(char*)a;
+        char y = *(char*)b;
+        return  y - x;
+    } else if (size == sizeof(istr)) {
+        istr* x = (istr*)a;
+        istr* y = (istr*)b;
+        int diff = y->x - x->x;
+        return diff ? diff : y->y - x->y;
+    } else if (size == sizeof(cstr)) {
+        cstr* x = (cstr*)a;
+        cstr* y = (cstr*)b;
+        int diff = y->x - x->x;
+        if (diff) return diff;
+        diff = y->y - x->y;
+        return diff ? diff : y->z - x->z;
+    }
+    return 0;
+}
+
+Node* merge(Node* a, Node* b, size_t size) {
+    Node dummy;
+    Node* tail = &dummy;
+    while (a && b) {
+        if (compare(a->data, b->data, size) <= 0) {
+            tail->next = a;
+            a = a->next;
+        } else {
+            tail->next = b;
+            b = b->next;
+        }
+        tail = tail->next;
+    }
+    tail->next = a ? a : b;
+    return dummy.next;
+}
+
+void merge_sort(Node** headRef, size_t size) {
+    Node* head = *headRef;
+    if (!head || !head->next) return;
+
+    Node* slow = head;
+    Node* fast = head->next;
+    while (fast && fast->next) {
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+
+    Node* a = head;
+    Node* b = slow->next;
+    slow->next = NULL;
+
+    merge_sort(&a, size);
+    merge_sort(&b, size);
+
+    *headRef = merge(a, b, size);
+}
 
 /**
    The function takes the pointer to linked list and
@@ -30,16 +106,6 @@ typedef struct{
    However, the return value is 1 if successfully inserted
    0 otherwise
 **/
-typedef struct node {
-    void *data;
-    struct node *next;
-} Node;
-typedef struct {
-    Node *head;
-    Node *crnt;
-    size_t data_size;
-
-} List;
 int add_node(void *ll, void *data){
     List* list = (List*) ll;
     Node* new_node = malloc(sizeof(Node));
@@ -65,9 +131,6 @@ int add_node(void *ll, void *data){
    a pointer to return value (removed data)
 **/
 void remove_node(void *ll, void *ret){
-//    if (((ll*)ll)->head == NULL) {
-//        return 0;
-//    }
     Node *curr = ((List*)ll)->head;
     Node *prev = NULL;
     while (curr->next != NULL) {
@@ -101,158 +164,34 @@ void *create_ll(size_t size){
 //  return NULL;
 }
 
-
-
 /**
    This function merge sorts the linked list.
  **/
-void merge(void* arr, int l, int m, int r, size_t elem_size, int (*comparator)(const void*, const void*)) {
-    int i, j, k;
-    void* temp = malloc(elem_size * (r - l + 1));
-    i = l;
-    j = m + 1;
-    k = 0;
-
-    while (i <= m && j <= r) {
-        if (comparator((char*)arr + i * elem_size, (char*)arr + j * elem_size) <= 0) {
-            memcpy((char*)temp + k * elem_size, (char*)arr + i * elem_size, elem_size);
-            i++;
-        }
-        else {
-            memcpy((char*)temp + k * elem_size, (char*)arr + j * elem_size, elem_size);
-            j++;
-        }
-        k++;
-    }
-
-    while (i <= m) {
-        memcpy((char*)temp + k * elem_size, (char*)arr + i * elem_size, elem_size);
-        i++;
-        k++;
-    }
-
-    while (j <= r) {
-        memcpy((char*)temp + k * elem_size, (char*)arr + j * elem_size, elem_size);
-        j++;
-        k++;
-    }
-
-    for (i = l, k = 0; i <= r; i++, k++) {
-        memcpy((char*)arr + i * elem_size, (char*)temp + k * elem_size, elem_size);
-    }
-    free(temp);
+void sort(void *ll){
+    List *list = (List *)ll;
+    if (!list || !list->head) return;
+    merge_sort(&list->head, list->data_size);
+    return;
 }
 
-void merge_sort(void* arr, int l, int r, size_t elem_size, int (*comparator)(const void*, const void*)) {
-    if (l < r) {
-        int m = l + (r - l) / 2;
-        merge_sort(arr, l, m, elem_size, comparator);
-        merge_sort(arr, m + 1, r, elem_size, comparator);
-        merge(arr, l, m, r, elem_size, comparator);
-    }
-}
-
-int compare_integers(const void* a, const void* b) {
-    int arg1 = *(const int*)a;
-    int arg2 = *(const int*)b;
-    return (arg1 < arg2) ? -1 : (arg1 > arg2);
-}
-
-void sort(void* ll) {
-    // Assuming that ll is a pointer to an array of integers
-    int* arr = *(int**)ll;
-    int n = *((int *)(((char *)ll) + sizeof(void *)));
-    merge_sort(arr, 0, n - 1, sizeof(int), &compare_integers);
-}
 /**
    Do not modify the function signature of the main function
    including spacing.
  **/
 int main(int argc, char** argv){ // Basically do NOT touch this line
-  /**
-     sample int ll code
-     ll* ill = create_ll(sizeof(int));
-     int i = 0;
-     add(ill, &i);
-     i += 1;
-     add(ill, &i);
-     sort(ill);
-     int rv
-     remove(ill, $&v);
-     printf("%d", rv);
-  **/
-
-    List* ill = create_ll(sizeof(int));
-    int iarr[] = {5, 1, 8, 3, 7};
-    for (int i = 0; i < 5; i++) {
-        add_node(ill, &iarr[i]);
-    }
-    sort(ill);
-    int ival;
-    while (ill->head) {
-        remove_node(ill, &ival);
-        printf("int: %d\n", ival);
-    }
-    free(ill);
-
-    // Test with shorts
-    List* sll = create_ll(sizeof(short));
-    short sarr[] = {5, 1, 8, 3, 7};
-    for (int i = 0; i < 5; i++) {
-        add_node(sll, &sarr[i]);
-    }
-    sort(sll);
-    short sval;
-    while (sll->head) {
-        remove_node(sll, &sval);
-        printf("short: %d\n", sval);
-    }
-    free(sll);
-
-    // Test with characters
-    List* cll = create_ll(sizeof(char));
-    char carr[] = {'c', 'a', 'e', 'b', 'd'};
-    for (int i = 0; i < 5; i++) {
-        add_node(cll, &carr[i]);
-    }
-    sort(cll);
-    char cval;
-    while (cll->head) {
-        remove_node(cll, &cval);
-        printf("char: %c\n", cval);
-    }
-    free(cll);
-
-    // Test with istr structs
-    List* istrl = create_ll(sizeof(istr));
-    istr istrarr[] = {{3, 4}, {1, 5}, {3, 2}, {1, 4}, {2, 1}};
-    for (int i = 0; i < 5; i++) {
-        add_node(istrl, &istrarr[i]);
-    }
-    sort(istrl);
-    istr istrval;
-    while (istrl->head) {
-        remove_node(istrl, &istrval);
-        printf("istr: %d, %d\n", istrval.x, istrval.y);
-    }
-    free(istrl);
-
-    // Test with cstr structs
-    List* cstrl = create_ll(sizeof(cstr));
-    cstr cstrarr[] = {{'a', 'b', 'c'}, {'a', 'a', 'a'}, {'b', 'a', 'c'}, {'a', 'b', 'a'}, {'a', 'c', 'c'}};
-    for (int i = 0; i < 5; i++) {
-        add_node(cstrl, &cstrarr[i]);
-    }
-    sort(cstrl);
-    cstr cstrval;
-    while (cstrl->head) {
-        remove_node(cstrl, &cstrval);
-        printf("cstr: %c, %c, %c\n", cstrval.x, cstrval.y, cstrval.z);
-    }
-    free(cstrl);
+    /**
+       sample int ll code
+       ll* ill = create_ll(sizeof(int));
+       int i = 0;
+       add(ill, &i);
+       i += 1;
+       add(ill, &i);
+       sort(ill);
+       int rv
+       remove(ill, $&v);
+       printf("%d", rv);
+    **/
 
 
-
-  
-  return 0;
+    return 0;
 }
