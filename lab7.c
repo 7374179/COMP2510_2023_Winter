@@ -102,28 +102,67 @@ void *create_ll(size_t size){
 }
 
 
+
 /**
    This function merge sorts the linked list.
  **/
-void sort(void *ll) {
-    List* list = (List*)ll;
-    if (list->head == NULL || list->head->next == NULL) {
-        return;
-    }
-    int n = sizeof(list);
-    for (int i = 0; i < n - 1; i++) {
-        Node* node1 = list->head;
-        Node* node2 = list->head->next;
-        for (int j = 0; j < n - i - 1; j++) {
-            if (node1->data > node2->data) {
-                void* temp = node1->data;
-                node1->data = node2->data;
-                node2->data = temp;
-            }
-            node1 = node1->next;
-            node2 = node2->next;
+void merge(void* arr, int l, int m, int r, size_t elem_size, int (*comparator)(const void*, const void*)) {
+    int i, j, k;
+    void* temp = malloc(elem_size * (r - l + 1));
+    i = l;
+    j = m + 1;
+    k = 0;
+
+    while (i <= m && j <= r) {
+        if (comparator((char*)arr + i * elem_size, (char*)arr + j * elem_size) <= 0) {
+            memcpy((char*)temp + k * elem_size, (char*)arr + i * elem_size, elem_size);
+            i++;
         }
+        else {
+            memcpy((char*)temp + k * elem_size, (char*)arr + j * elem_size, elem_size);
+            j++;
+        }
+        k++;
     }
+
+    while (i <= m) {
+        memcpy((char*)temp + k * elem_size, (char*)arr + i * elem_size, elem_size);
+        i++;
+        k++;
+    }
+
+    while (j <= r) {
+        memcpy((char*)temp + k * elem_size, (char*)arr + j * elem_size, elem_size);
+        j++;
+        k++;
+    }
+
+    for (i = l, k = 0; i <= r; i++, k++) {
+        memcpy((char*)arr + i * elem_size, (char*)temp + k * elem_size, elem_size);
+    }
+    free(temp);
+}
+
+void merge_sort(void* arr, int l, int r, size_t elem_size, int (*comparator)(const void*, const void*)) {
+    if (l < r) {
+        int m = l + (r - l) / 2;
+        merge_sort(arr, l, m, elem_size, comparator);
+        merge_sort(arr, m + 1, r, elem_size, comparator);
+        merge(arr, l, m, r, elem_size, comparator);
+    }
+}
+
+int compare_integers(const void* a, const void* b) {
+    int arg1 = *(const int*)a;
+    int arg2 = *(const int*)b;
+    return (arg1 < arg2) ? -1 : (arg1 > arg2);
+}
+
+void sort(void* ll) {
+    // Assuming that ll is a pointer to an array of integers
+    int* arr = *(int**)ll;
+    int n = *((int *)(((char *)ll) + sizeof(void *)));
+    merge_sort(arr, 0, n - 1, sizeof(int), &compare_integers);
 }
 /**
    Do not modify the function signature of the main function
@@ -142,28 +181,6 @@ int main(int argc, char** argv){ // Basically do NOT touch this line
      remove(ill, $&v);
      printf("%d", rv);
   **/
-
-//    List* ill = create_ll(sizeof(int));
-//    int i = 0;
-//    add_node(ill, &i);
-//    i += 1;
-//    add_node(ill, &i);
-//    sort(ill);
-//    int rv;
-//    remove_node(ill, &rv);
-//    printf("%d\n", rv);
-
-//    List* ill = create_ll(sizeof(int));
-//    char i = 'a';
-//    add_node(ill, &i);
-//    i += 1;
-//    add_node(ill, &i);
-//    i += 1;
-//    add_node(ill, &i);
-//    sort(ill);
-//    int rv;
-//    remove_node(ill, &rv);
-//    printf("%c\n", rv);
 
     List* ill = create_ll(sizeof(int));
     int iarr[] = {5, 1, 8, 3, 7};
