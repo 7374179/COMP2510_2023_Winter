@@ -17,22 +17,7 @@ static void SetBinNode(BinNode *n, int data, BinNode *left, BinNode *right) {
     n->right = right;
 }
 
-//int MemberNoCmp(const BinNode x, const BinNode y){
-//    return x.data < y.data ? -1 : x.data > y.data ? 1: 0;
-//}
-
-
 BinNode *Add(BinNode *p, int data) {
-//    int cond;
-//    if (p == NULL) {
-//        p = AllocBinNode();
-//        SetBinNode(p, data, NULL, NULL);
-//    } else if (cond < 0) {
-//        p->left = Add(p->left, data);
-//    } else {
-//        p->right = Add(p->right, data);
-//    }
-//    return p;
     if (p == NULL) {
         p = AllocBinNode();
         SetBinNode(p, data, NULL, NULL);
