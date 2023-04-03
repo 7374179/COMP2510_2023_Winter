@@ -81,8 +81,8 @@ BinNode *Add(BinNode *p, int data) {
 
 void PrintTree(FILE *fop, const BinNode *p) {
     if (p != NULL) {
-        PrintTree(fop, p->left);
         fprintf(fop, "%d\n", p->data);
+        PrintTree(fop, p->left);
         PrintTree(fop, p->right);
     }
 }
@@ -138,4 +138,3 @@ int main(int argc, char **argv) {
 
     return 0;
 }
-
