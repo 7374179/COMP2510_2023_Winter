@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
 
 typedef struct bnode {
     int data;
@@ -65,8 +67,8 @@ BinNode *Add(BinNode *p, int data) {
         SetBinNode(p, data, NULL, NULL);
     }
     else if (data == p->data) {
-        printf("Error! There is same data\n");
-//        Remove(&p, p->data);
+//        printf("Error! There is same data\n");
+        Remove(&p, p->data);
     } else if (data < p->data) {
 //        Add(p->left, data);
         p->left = Add(p->left, data);
@@ -85,6 +87,24 @@ void PrintTree(FILE *fop, const BinNode *p) {
     }
 }
 
+int isFileEmpty(FILE *f) {
+    int c;
+    while ((c = fgetc(f)) != EOF) {
+        if (!isspace(c)) {
+            if (c == '\n') {
+                // Empty line found, return 0
+                return 0;
+            } else if (!isspace(c)) {
+                // Non-whitespace character found, return 0
+                ungetc(c, f);
+                return 0;
+            }
+        }
+        // End of file reached, return 1
+        return 1;
+    }
+}
+
 int main(int argc, char **argv) {
     FILE *fip1, *fip2, *fop;
     int data;
@@ -96,6 +116,10 @@ int main(int argc, char **argv) {
 
     if (fip1 == NULL || fip2 == NULL || fop == NULL) {
         printf("Failed to open file\n");
+    }
+    if(isFileEmpty(fip1)|| isFileEmpty(fip2)){
+        printf("COMP2510ERROR: input file is empty or contains only white space characters\n");
+        return 1;
     }
 
     while (fscanf(fip1, "%d", &data) != EOF) {
