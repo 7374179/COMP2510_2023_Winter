@@ -105,6 +105,15 @@ int isFileEmpty(FILE *f) {
     }
 }
 
+void freeTree(TreeNode * root){
+    if(root == NULL){
+        return;
+    }
+    freeTree(root->left);
+    freeTree(root->right);
+    free(root);
+}
+
 int main(int argc, char **argv) {
     FILE *fip1, *fip2, *fop;
     int data;
@@ -134,7 +143,7 @@ int main(int argc, char **argv) {
     fclose(fip2);
     fclose(fop);
 
-    free(root);
+    freeTree(root);
 
     return 0;
 }
