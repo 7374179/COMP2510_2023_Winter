@@ -1,7 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
 
 typedef struct bnode {
     int data;
@@ -10,7 +8,8 @@ typedef struct bnode {
 } BinNode;
 
 int Remove(BinNode **root, int data);
-BinNode *Add(BinNode *p, int data);
+BinNode *Add1(BinNode *p, int data);
+BinNode *Add2(BinNode *p, int data);
 
 static BinNode *AllocBinNode(void) {
     return calloc(1, sizeof(BinNode));
@@ -38,7 +37,7 @@ int Remove(BinNode **root, int data) {
         } else if (data > (*p)->data) {
             p = &((*p)->right);
         } else{
-            *p = Add(*p, (*p)->data);
+            *p = Add2(*p, (*p)->data);
         }
     }
 
@@ -61,7 +60,23 @@ int Remove(BinNode **root, int data) {
     return 0;
 }
 
-BinNode *Add(BinNode *p, int data) {
+BinNode *Add1(BinNode *p, int data) {
+    if (p == NULL) {
+        p = AllocBinNode();
+        SetBinNode(p, data, NULL, NULL);
+    }
+    else if (data == p->data) {
+        p->left = Add1(p->left, data);
+    } else if (data < p->data) {
+//        Add(p->left, data);
+        p->left = Add1(p->left, data);
+    } else if (data > p->data){
+//        Add(p->right, data);
+        p->right = Add1(p->right, data);
+    }
+    return p;
+}
+BinNode *Add2(BinNode *p, int data) {
     if (p == NULL) {
         p = AllocBinNode();
         SetBinNode(p, data, NULL, NULL);
@@ -71,10 +86,10 @@ BinNode *Add(BinNode *p, int data) {
         Remove(&p, p->data);
     } else if (data < p->data) {
 //        Add(p->left, data);
-        p->left = Add(p->left, data);
+        p->left = Add2(p->left, data);
     } else if (data > p->data){
 //        Add(p->right, data);
-        p->right = Add(p->right, data);
+        p->right = Add2(p->right, data);
     }
     return p;
 }
@@ -87,25 +102,7 @@ void PrintTree(FILE *fop, const BinNode *p) {
     }
 }
 
-int isFileEmpty(FILE *f) {
-    int c;
-    while ((c = fgetc(f)) != EOF) {
-        if (!isspace(c)) {
-            if (c == '\n') {
-                // Empty line found, return 0
-                return 0;
-            } else if (!isspace(c)) {
-                // Non-whitespace character found, return 0
-                ungetc(c, f);
-                return 0;
-            }
-        }
-        // End of file reached, return 1
-        return 1;
-    }
-}
-
-void freeTree(BinNode * root){
+void freeTree(BinNode* root){
     if(root == NULL){
         return;
     }
@@ -116,7 +113,6 @@ void freeTree(BinNode * root){
 
 int main(int argc, char **argv) {
     FILE *fip1, *fip2, *fop;
-    char* input = (char*)malloc(sizeof(char));
     int data;
     BinNode *root = NULL;
 
@@ -127,27 +123,12 @@ int main(int argc, char **argv) {
     if (fip1 == NULL || fip2 == NULL || fop == NULL) {
         printf("Failed to open file\n");
     }
-    if(isFileEmpty(fip1)|| isFileEmpty(fip2)){
-        printf("COMP2510ERROR: input file is empty or contains only white space characters\n");
-        return 1;
-    }
 
-    char* endptr;
-    while (fscanf(fip1, "%s", input) != EOF) {
-        long data = strtol(input, &endptr, 10);
-        if (*endptr != '\0') {
-            printf("COMP2510ERROR: input file contains non-numeric characters\n");
-            return 1;
-        }
-        root = Add(root, data);
+    while (fscanf(fip1, "%d", &data) != EOF) {
+        root = Add1(root, data);
     }
-    while (fscanf(fip2, "%s", input) != EOF) {
-        long data = strtol(input, &endptr, 10);
-        if (*endptr != '\0') {
-            printf("COMP2510ERROR: input file contains non-numeric characters\n");
-            return 1;
-        }
-        root = Add(root, data);
+    while (fscanf(fip2, "%d", &data) != EOF) {
+        root = Add2(root, data);
     }
     PrintTree(fop, root);
 
@@ -156,7 +137,7 @@ int main(int argc, char **argv) {
     fclose(fop);
 
     freeTree(root);
-    free(input);
 
     return 0;
 }
+
