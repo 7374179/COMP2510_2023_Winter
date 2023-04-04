@@ -116,7 +116,7 @@ void freeTree(BinNode * root){
 
 int main(int argc, char **argv) {
     FILE *fip1, *fip2, *fop;
-    char input[100];
+    char* input = (char*)malloc(sizeof(char));
     int data;
     BinNode *root = NULL;
 
@@ -156,6 +156,7 @@ int main(int argc, char **argv) {
     fclose(fop);
 
     freeTree(root);
+    free(input);
 
     return 0;
 }
