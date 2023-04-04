@@ -105,7 +105,7 @@ int isFileEmpty(FILE *f) {
     }
 }
 
-void freeTree(TreeNode * root){
+void freeTree(BinNode * root){
     if(root == NULL){
         return;
     }
@@ -116,6 +116,7 @@ void freeTree(TreeNode * root){
 
 int main(int argc, char **argv) {
     FILE *fip1, *fip2, *fop;
+    char input[100];
     int data;
     BinNode *root = NULL;
 
@@ -131,10 +132,24 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    while (fscanf(fip1, "%d", &data) != EOF) {
+    while (fscanf(fip1, "%s", input) != EOF) {
+        for (int i = 0; input[i] != '\0'; i++) {
+            if (!isdigit(input[i])) {
+                printf("COMP2510ERROR: input file contains non-numeric characters\n");
+                return 1;
+            }
+        }
+        data = atoi(input);
         root = Add(root, data);
     }
-    while (fscanf(fip2, "%d", &data) != EOF) {
+    while (fscanf(fip2, "%s", input) != EOF) {
+        for (int i = 0; input[i] != '\0'; i++) {
+            if (!isdigit(input[i])) {
+                printf("COMP2510ERROR: input file contains non-numeric characters\n");
+                return 1;
+            }
+        }
+        data = atoi(input);
         root = Add(root, data);
     }
     PrintTree(fop, root);
