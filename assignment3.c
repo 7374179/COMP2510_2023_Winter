@@ -132,24 +132,21 @@ int main(int argc, char **argv) {
         return 1;
     }
 
+    char* endptr;
     while (fscanf(fip1, "%s", input) != EOF) {
-        for (int i = 0; input[i] != '\0'; i++) {
-            if (!isdigit(input[i])) {
-                printf("COMP2510ERROR: input file contains non-numeric characters\n");
-                return 1;
-            }
+        long data = strtol(input, &endptr, 10);
+        if (*endptr != '\0') {
+            printf("COMP2510ERROR: input file contains non-numeric characters\n");
+            return 1;
         }
-        data = atoi(input);
         root = Add(root, data);
     }
     while (fscanf(fip2, "%s", input) != EOF) {
-        for (int i = 0; input[i] != '\0'; i++) {
-            if (!isdigit(input[i])) {
-                printf("COMP2510ERROR: input file contains non-numeric characters\n");
-                return 1;
-            }
+        long data = strtol(input, &endptr, 10);
+        if (*endptr != '\0') {
+            printf("COMP2510ERROR: input file contains non-numeric characters\n");
+            return 1;
         }
-        data = atoi(input);
         root = Add(root, data);
     }
     PrintTree(fop, root);
