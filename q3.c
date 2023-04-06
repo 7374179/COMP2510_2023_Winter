@@ -6,7 +6,10 @@ int count(char *books, int n) {
     int tmp = 0;
     for (int i = 1; i < n; i++) {
         if (books[i - 1] > books[i]) {
-            tmp = tmp + books[i-1];
+            if (tmp > max) {
+
+                tmp = tmp + books[i - 1];
+            }
         } else {
             if (tmp > max) {
                 max = tmp;
