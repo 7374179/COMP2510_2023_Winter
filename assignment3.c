@@ -136,18 +136,6 @@ void PrintTree(FILE *fop, const BinNode *p)
     }
 }
 
-int parse_int(char *str)
-{
-    int result;
-    char *endptr;
-    result = strtol(str, &endptr, 10);
-    if (endptr == str || (*endptr != '\n' && *endptr != '\0'))
-    {
-        return -1;
-    }
-    return result;
-}
-
 void freeTree(BinNode *root)
 {
     if (root == NULL)
@@ -175,27 +163,26 @@ int main(int argc, char **argv)
         printf("COMP2510ERROR: Failed to open file\n");
     }
 
-    while (fgets(line, sizeof(line), fip1) != NULL)
+while (fgets(line, sizeof(line), fip1) != NULL)
+{
+    if (sscanf(line, "%d%*[^ \t\n]%*[ \t\n]", &data) != 1)
     {
-        int data = parse_int(line);
-        if (data == -1)
-        {
-            printf("COMP2510ERROR: Invalid input format\n");
-            exit(1);
-        }
-        root = Add1(root, data);
+        printf("COMP2510ERROR: Invalid input format\n");
+        exit(1);
     }
+    root = Add1(root, data);
+}
 
-    while (fgets(line, sizeof(line), fip2) != NULL)
+while (fgets(line, sizeof(line), fip2) != NULL)
+{
+    if (sscanf(line, "%d%*[^ \t\n]%*[ \t\n]", &data) != 1)
     {
-        int data = parse_int(line);
-        if (data == -1)
-        {
-            printf("COMP2510ERROR: Invalid input format\n");
-            exit(1);
-        }
-        root = Add2(root, data);
+        printf("COMP2510: Invalid input format\n");
+        exit(1);
     }
+    root = Add2(root, data);
+}
+
 
     PrintTree(fop, root);
 
